@@ -1,138 +1,93 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Stock Forecast</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h2>📈 7-Day Stock Forecast</h2>
-
-    <select id="ticker">
-    <option value="RELIANCE.NS">Reliance</option>
-    <option value="TCS.NS">TCS</option>
-    <option value="INFY.NS">Infosys</option>
-    <option value="HDFCBANK.NS">HDFC Bank</option>
-    <option value="ICICIBANK.NS">ICICI Bank</option>
-    <option value="SBIN.NS">State Bank of India</option>
-    <option value="HINDUNILVR.NS">Hindustan Unilever</option>
-    <option value="ITC.NS">ITC</option>
-    <option value="BAJFINANCE.NS">Bajaj Finance</option>
-    <option value="KOTAKBANK.NS">Kotak Mahindra Bank</option>
-    <option value="WIPRO.NS">Wipro</option>
-    <option value="ADANIENT.NS">Adani Enterprises</option>
-    <option value="AXISBANK.NS">Axis Bank</option>
-    <option value="LT.NS">Larsen & Toubro</option>
-</select>
-    <button onclick="predict()">Predict</button>
-
-    <canvas id="myChart" width="400" height="200"></canvas>
-
-    <script>
-        let chart;
-
-        function predict() {
-            const ticker = document.getElementById("ticker").value;
-
-            fetch('http://localhost:5001/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ticker })
-            })
-            .then(res => res.json())
-            .then(data => {
-                const preds = data.predictions;
-                const labels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
-
-                if (chart) chart.destroy();
-                const ctx = document.getElementById('myChart').getContext('2d');
-                chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: `Predicted Prices`,
-                            data: preds,
-                            borderColor: 'blue',
-                            backgroundColor: 'lightblue',
-                            fill: false,
-                            tension: 0.2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: false
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(err => {
-                console.error("Prediction failed:", err);
-                alert("Prediction failed. Please check if the server is running.");
-            });
-        }
-    </script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Stock Forecast</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    <!-- jQuery -->
+    <!-- jQuery + Select2 JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
-<body>
-    <h2>📈 7-Day Stock Forecast</h2>
+<body class="bg-gradient-to-br from-slate-100 to-blue-100 min-h-screen flex items-center justify-center font-sans">
 
-    <select id="ticker" class="select2" style="width: 300px;">
-    <option value="RELIANCE.NS">Reliance Industries</option>
-    <option value="TCS.NS">TCS</option>
-    <option value="INFY.NS">Infosys</option>
-    <option value="HDFCBANK.NS">HDFC Bank</option>
-    <option value="ICICIBANK.NS">ICICI Bank</option>
-    <option value="SBIN.NS">State Bank of India</option>
-    <option value="HINDUNILVR.NS">Hindustan Unilever</option>
-    <option value="ITC.NS">ITC</option>
-    <option value="BAJFINANCE.NS">Bajaj Finance</option>
-    <option value="KOTAKBANK.NS">Kotak Mahindra Bank</option>
-    <option value="WIPRO.NS">Wipro</option>
-    <option value="ADANIENT.NS">Adani Enterprises</option>
-    <option value="AXISBANK.NS">Axis Bank</option>
-    <option value="LT.NS">Larsen & Toubro</option>
-    <option value="SUNPHARMA.NS">Sun Pharma</option>
-    <option value="NTPC.NS">NTPC</option>
-    <option value="MARUTI.NS">Maruti Suzuki</option>
-    <option value="POWERGRID.NS">Power Grid Corp</option>
-    <option value="ASIANPAINT.NS">Asian Paints</option>
-    <option value="ULTRACEMCO.NS">UltraTech Cement</option>
-    <option value="HCLTECH.NS">HCL Technologies</option>
-    <option value="TECHM.NS">Tech Mahindra</option>
-    <option value="TITAN.NS">Titan Company</option>
-    <option value="BHARTIARTL.NS">Bharti Airtel</option>
-    <option value="GRASIM.NS">Grasim Industries</option>
-    <option value="NESTLEIND.NS">Nestle India</option>
-    <option value="ONGC.NS">ONGC</option>
-    <option value="COALINDIA.NS">Coal India</option>
-    <option value="BRITANNIA.NS">Britannia Industries</option>
-    <option value="ADANIPORTS.NS">Adani Ports</option>
-</select>
+    <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-xl">
+        <h2 class="text-2xl font-bold text-center mb-6 text-blue-700">📈 7-Day Stock Price Forecast</h2>
 
-    <button onclick="predict()">Predict</button>
+        <div class="mb-6">
+            <label for="ticker" class="block mb-2 font-medium text-gray-700">Select a Stock:</label>
+            <select id="ticker" class="select2 w-full">
+                <option value="RELIANCE.NS">Reliance Industries</option>
+                <option value="TCS.NS">TCS</option>
+                <option value="INFY.NS">Infosys</option>
+                <option value="HDFCBANK.NS">HDFC Bank</option>
+                <option value="ICICIBANK.NS">ICICI Bank</option>
+                <option value="SBIN.NS">State Bank of India</option>
+                <option value="HINDUNILVR.NS">Hindustan Unilever</option>
+                <option value="ITC.NS">ITC</option>
+                <option value="BAJFINANCE.NS">Bajaj Finance</option>
+                <option value="KOTAKBANK.NS">Kotak Mahindra Bank</option>
+                <option value="WIPRO.NS">Wipro</option>
+                <option value="ADANIENT.NS">Adani Enterprises</option>
+                <option value="AXISBANK.NS">Axis Bank</option>
+                <option value="LT.NS">Larsen & Toubro</option>
+                <option value="SUNPHARMA.NS">Sun Pharma</option>
+                <option value="NTPC.NS">NTPC</option>
+                <option value="MARUTI.NS">Maruti Suzuki</option>
+                <option value="POWERGRID.NS">Power Grid Corp</option>
+                <option value="ASIANPAINT.NS">Asian Paints</option>
+                <option value="ULTRACEMCO.NS">UltraTech Cement</option>
+                <option value="HCLTECH.NS">HCL Technologies</option>
+                <option value="TECHM.NS">Tech Mahindra</option>
+                <option value="TITAN.NS">Titan Company</option>
+                <option value="BHARTIARTL.NS">Bharti Airtel</option>
+                <option value="GRASIM.NS">Grasim Industries</option>
+                <option value="NESTLEIND.NS">Nestle India</option>
+                <option value="ONGC.NS">ONGC</option>
+                <option value="COALINDIA.NS">Coal India</option>
+                <option value="BRITANNIA.NS">Britannia Industries</option>
+                <option value="ADANIPORTS.NS">Adani Ports</option>
+                <option value="DIVISLAB.NS">Divi's Laboratories</option>
+                <option value="EICHERMOT.NS">Eicher Motors</option>
+                <option value="BPCL.NS">Bharat Petroleum</option>
+                <option value="BAJAJ-AUTO.NS">Bajaj Auto</option>
+                <option value="CIPLA.NS">Cipla</option>
+                <option value="DRREDDY.NS">Dr. Reddy's Labs</option>
+                <option value="JSWSTEEL.NS">JSW Steel</option>
+                <option value="TATACONSUM.NS">Tata Consumer Products</option>
+                <option value="INDUSINDBK.NS">IndusInd Bank</option>
+                <option value="UPL.NS">UPL</option>
+                <option value="HAVELLS.NS">Havells India</option>
+                <option value="DABUR.NS">Dabur</option>
+                <option value="TATAPOWER.NS">Tata Power</option>
+                <option value="PIDILITIND.NS">Pidilite Industries</option>
+                <option value="HEROMOTOCO.NS">Hero MotoCorp</option>
+                <option value="M&M.NS">Mahindra & Mahindra</option>
+                <option value="TATASTEEL.NS">Tata Steel</option>
+                <option value="SHREECEM.NS">Shree Cement</option>
+                <option value="AMBUJACEM.NS">Ambuja Cements</option>
+                <option value="ABB.NS">ABB India</option>
+            </select>
+        </div>
 
-    <canvas id="myChart" width="400" height="200"></canvas>
+        <div class="text-center mb-6">
+            <button onclick="predict()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                🔍 Predict
+            </button>
+        </div>
+
+        <div>
+            <canvas id="myChart" class="w-full"></canvas>
+        </div>
+    </div>
 
     <script>
         let chart;
@@ -166,17 +121,37 @@
                         datasets: [{
                             label: `Predicted Prices`,
                             data: preds,
-                            borderColor: 'blue',
-                            backgroundColor: 'lightblue',
-                            fill: false,
-                            tension: 0.2
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#3b82f6'
                         }]
                     },
                     options: {
                         responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    color: '#1e40af',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        },
                         scales: {
                             y: {
-                                beginAtZero: false
+                                beginAtZero: false,
+                                ticks: {
+                                    color: '#1e293b'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#1e293b'
+                                }
                             }
                         }
                     }
