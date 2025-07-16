@@ -3,6 +3,7 @@ from flask_cors import CORS
 import yfinance as yf
 import numpy as np
 import joblib
+import os
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import MinMaxScaler
 
